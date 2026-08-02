@@ -388,4 +388,43 @@ function readBeatgrid(filePath) {
   }
 }
 
-module.exports = { readCues, readBeatgrid, parseBeatgrid, extractGeobFrames, extractSeratoFrames };
+// Convierte una posición en SEGUNDOS a beat/compás usando el beatgrid.
+// Devuelve { beat (1-based), bar (compás, 4/4) } o null si no hay grid o está fuera de rango.
+function secondsToBeatPosition(beatgrid, seconds) {
+  try {
+    if (!beatgrid || !beatgrid.markers || !beatgrid.markers.length) return null;
+    if (typeof seconds !== 'number' || !isFinite(seconds) || seconds < 0) return null;
+    const markers = beatgrid.markers;
+    if (seconds < markers[0].position) return null;
+
+    let beat = 1; // primer beat del grid
+    for (let i = 0; i < markers.length; i++) {
+      const m = markers[i];
+      const next = markers[i + 1] || null;
+      const sectionStart = m.position;
+
+      if (!next) {
+        // Último marker: se extiende con su BPM
+        const bpm = m.bpm;
+        if (!bpm || bpm <= 0) return { beat, bar: Math.ceil(beat / 4), positionSeconds: seconds };
+        const secPerBeat = 60 / bpm;
+        const extra = Math.floor((seconds - sectionStart) / secPerBeat);
+        return { beat: beat + extra, bar: Math.ceil((beat + extra) / 4), positionSeconds: seconds };
+      }
+
+      const sectionEnd = next.position;
+      if (seconds < sectionEnd) {
+        const beatsToNext = m.beatsToNext || 1;
+        const secPerBeat = (sectionEnd - sectionStart) / beatsToNext;
+        const extra = Math.floor((seconds - sectionStart) / secPerBeat);
+        return { beat: beat + extra, bar: Math.ceil((beat + extra) / 4), positionSeconds: seconds };
+      }
+      beat += (m.beatsToNext || 1);
+    }
+    return null;
+  } catch (_) {
+    return null;
+  }
+}
+
+module.exports = { readCues, readBeatgrid, parseBeatgrid, secondsToBeatPosition, extractGeobFrames, extractSeratoFrames };

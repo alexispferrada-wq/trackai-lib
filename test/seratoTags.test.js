@@ -1,7 +1,7 @@
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
-const { parseBeatgrid, readBeatgrid, readCues } = require('../src/seratoTags');
+const { parseBeatgrid, readBeatgrid, readCues, secondsToBeatPosition } = require('../src/seratoTags');
 
 function buildBeatgridBuffer(positions, bpm) {
   const parts = [Buffer.from([0x01, 0x00])];
@@ -82,5 +82,36 @@ describe('BeatGrid de Serato', () => {
     } finally {
       fs.unlinkSync(file);
     }
+  });
+});
+
+describe('secondsToBeatPosition', () => {
+  test('Grid con markers uniformes: calcula beat y compás', () => {
+    // 128 BPM → 0.46875s por beat; markers cada 4 beats (1.875s)
+    const grid = {
+      markers: [
+        { position: 0.0, beatsToNext: 4 },
+        { position: 1.875, beatsToNext: 4 },
+        { position: 3.75, bpm: 128 },
+      ],
+    };
+    const p1 = secondsToBeatPosition(grid, 0.4);
+    expect(p1).not.toBeNull();
+    expect(p1.beat).toBe(1);
+    expect(p1.bar).toBe(1);
+
+    const p2 = secondsToBeatPosition(grid, 2.5);
+    expect(p2.beat).toBe(6); // 4 beats del primer marker + 2 en el segundo tramo
+    expect(p2.bar).toBe(2);
+
+    const p3 = secondsToBeatPosition(grid, 4.5);
+    expect(p3.beat).toBeGreaterThan(6);
+  });
+
+  test('Fuera de rango o sin grid → null', () => {
+    expect(secondsToBeatPosition(null, 5)).toBeNull();
+    expect(secondsToBeatPosition({ markers: [] }, 5)).toBeNull();
+    expect(secondsToBeatPosition({ markers: [{ position: 10, bpm: 128 }] }, 3)).toBeNull();
+    expect(secondsToBeatPosition({ markers: [{ position: 0, bpm: 128 }] }, -1)).toBeNull();
   });
 });
