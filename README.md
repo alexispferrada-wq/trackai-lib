@@ -4,7 +4,7 @@
 
 - 📚 `master.sqlite` (SQLite): biblioteca `asset`, historial `history_entry` / `history_session`, play counts
 - 📦 Crates (`~/Music/_Serato_/Subcrates/*.crate`): formato binario tag/length
-- 📍 Cue points y beatgrid (`Serato Markers2` en frames GEOB de ID3v2)
+- 📍 Cue points (`Serato Markers2`) y **beatgrid** (`Serato BeatGrid`) en MP3/AIFF (ID3v2 GEOB), **FLAC** (VORBIS_COMMENT) y **M4A/MP4** (atoms `----` de `com.serato.dj`)
 - 🎼 Motor armónico Camelot: clasificación de transiciones + compatibilidad de BPM
 
 **Todo en SOLO LECTURA** — nunca modifica tu biblioteca de Serato. Probado contra Serato DJ Pro 4.x en macOS y Windows.
@@ -46,7 +46,11 @@ console.log(c.crateNames); // ['Reggaeton', 'Oldschool', ...]
 const cues = seratoTags.readCues('/path/to/track.mp3');
 console.log(cues); // { cues: [{ index, posMs, color, name }], firstCueMs, lastCueMs }
 
-// 5) Transiciones armónicas (rueda Camelot)
+// 5) Beatgrid (MP3/AIFF/FLAC/M4A/MP4) — posiciones de beats + BPM
+const bg = seratoTags.readBeatgrid('/path/to/track.flac');
+console.log(bg); // { markers: [{ position, beatsToNext } | { position, bpm }] }
+
+// 6) Transiciones armónicas (rueda Camelot)
 const t = harmonic.classifyTransition('8A', '9A');
 console.log(t.type); // 'energy_up'
 console.log(harmonic.bpmCompat(125, 125.5, 'auto', 6)); // { compatible: true, ... }
