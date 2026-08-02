@@ -1,6 +1,6 @@
 {
   "name": "@alexisferrada/trackai-lib",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Open core de TrackAI: lectura de la base de datos de Serato DJ Pro (master.sqlite), crates, cue points (Serato Markers2) y motor armónico Camelot. Todo en solo lectura.",
   "main": "src/index.js",
   "publishConfig": {
