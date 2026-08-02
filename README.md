@@ -21,14 +21,14 @@ cd trackai-lib
 npm install
 ```
 
-O como paquete npm: `npm install @alexispferrada-wq/trackai-lib` (una vez publicado en npmjs.com).
+O como paquete npm: `npm install @alexisferrada/trackai-lib`.
 
 Sin dependencias de runtime (solo `jest` para tests). Requiere `sqlite3` en el PATH (macOS lo trae en `/usr/bin/sqlite3`; en Windows usa `bin/win32/sqlite3.exe` de tu instalación o el PATH).
 
 ## Uso rápido
 
 ```js
-const { serato, crates, seratoTags, harmonic } = require('@alexispferrada-wq/trackai-lib');
+const { serato, crates, seratoTags, harmonic } = require('@alexisferrada/trackai-lib');
 
 // 1) ¿Qué estás tocando ahora en Serato?
 const np = serato.nowPlaying();
