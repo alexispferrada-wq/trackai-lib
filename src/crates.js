@@ -10,7 +10,7 @@ const path = require('path');
 const os = require('os');
 
 const HOME = os.homedir();
-const CONFIG_FILE = path.join(process.env.SERATO_LIB_DIR || path.join(HOME, '.trackai'), 'config.json');
+const CONFIG_FILE = path.join(HOME, '.trackai', 'config.json');
 
 function loadConfig() {
   try {

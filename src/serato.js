@@ -12,7 +12,7 @@ const os = require('os');
 const { execFileSync } = require('child_process');
 
 const HOME = os.homedir();
-const TRACKAI_DIR = process.env.SERATO_LIB_DIR || path.join(HOME, '.trackai');
+const TRACKAI_DIR = path.join(HOME, '.trackai');
 if (!fs.existsSync(TRACKAI_DIR)) {
   try { fs.mkdirSync(TRACKAI_DIR, { recursive: true }); } catch (_) {}
 }
